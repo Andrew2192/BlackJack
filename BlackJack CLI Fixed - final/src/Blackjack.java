@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -24,61 +23,14 @@ public class Blackjack {
     int cardWidth = 30;
 
     String[] cardList = {
-        "clubs_A", 
-        "clubs_2", 
-        "clubs_3", 
-        "clubs_4", 
-        "clubs_5", 
-        "clubs_6", 
-        "clubs_7",
-        "clubs_8", 
-        "clubs_9", 
-        "clubs_10", 
-        "clubs_J", 
-        "clubs_Q", 
-        "clubs_K",
-        
-        "diamonds_A", 
-        "diamonds_2", 
-        "diamonds_3", 
-        "diamonds_4", 
-        "diamonds_5", 
-        "diamonds_6",
-        "diamonds_7", 
-        "diamonds_8", 
-        "diamonds_9", 
-        "diamonds_10", 
-        "diamonds_J", 
-        "diamonds_Q", 
-        "diamonds_K",
-        
-        "spades_A", 
-        "spades_2", 
-        "spades_3", 
-        "spades_4", 
-        "spades_5", 
-        "spades_6", 
-        "spades_7",
-        "spades_8", 
-        "spades_9", 
-        "spades_10", 
-        "spades_J", 
-        "spades_Q", 
-        "spades_K",
-        
-        "hearts_A", 
-        "hearts_2", 
-        "hearts_3", 
-        "hearts_4", 
-        "hearts_5", 
-        "hearts_6", 
-        "hearts_7",
-        "hearts_8", 
-        "hearts_9", 
-        "hearts_10", 
-        "hearts_J", 
-        "hearts_Q", 
-        "hearts_K"
+        "clubs_A", "clubs_2", "clubs_3", "clubs_4", "clubs_5", "clubs_6", "clubs_7",
+        "clubs_8", "clubs_9", "clubs_10", "clubs_J", "clubs_Q", "clubs_K",
+        "diamonds_A", "diamonds_2", "diamonds_3", "diamonds_4", "diamonds_5", "diamonds_6",
+        "diamonds_7", "diamonds_8", "diamonds_9", "diamonds_10", "diamonds_J", "diamonds_Q", "diamonds_K",
+        "spades_A", "spades_2", "spades_3", "spades_4", "spades_5", "spades_6", "spades_7",
+        "spades_8", "spades_9", "spades_10", "spades_J", "spades_Q", "spades_K",
+        "hearts_A", "hearts_2", "hearts_3", "hearts_4", "hearts_5", "hearts_6", "hearts_7",
+        "hearts_8", "hearts_9", "hearts_10", "hearts_J", "hearts_Q", "hearts_K"
     };
 
     Scanner scan = new Scanner(System.in);
@@ -101,36 +53,32 @@ public class Blackjack {
     boolean keepGoing = true;
     double bet = 0;
 
+    public static void main(String[] args) {
+        new Blackjack();
+    }
+
     Blackjack() {
         setupCards();
         shuffleCards();
+        System.out.println("=================================");
+        System.out.println("   WELCOME TO BLACKJACK!");
+        System.out.println("=================================");
         playAgain();
+        scan.close();
     }
 
     public void setupCards() {
         cardValues = new ArrayList<>();
 
-        for (String value : cardList) {
-            if (value.substring(value.length() - 1).equals("A")) {
+        for (String cardName : cardList) {
+            String rank = cardName.substring(cardName.lastIndexOf('_') + 1);
+            
+            if (rank.equals("A")) {
                 cardValues.add(11);
-            } else if (value.substring(value.length() - 1).equals("2")) {
-                cardValues.add(2);
-            } else if (value.substring(value.length() - 1).equals("3")) {
-                cardValues.add(3);
-            } else if (value.substring(value.length() - 1).equals("4")) {
-                cardValues.add(4);
-            } else if (value.substring(value.length() - 1).equals("5")) {
-                cardValues.add(5);
-            } else if (value.substring(value.length() - 1).equals("6")) {
-                cardValues.add(6);
-            } else if (value.substring(value.length() - 1).equals("7")) {
-                cardValues.add(7);
-            } else if (value.substring(value.length() - 1).equals("8")) {
-                cardValues.add(8);
-            } else if (value.substring(value.length() - 1).equals("9")) {
-                cardValues.add(9);
-            } else {
+            } else if (rank.equals("J") || rank.equals("Q") || rank.equals("K")) {
                 cardValues.add(10);
+            } else {
+                cardValues.add(Integer.parseInt(rank));
             }
         }
 
@@ -171,6 +119,7 @@ public class Blackjack {
 
     public void playAgain() {
         while (keepGoing) {
+            ensureDeckSize();
             askUserHowMuchtoBet();
             dealCardstoPlayer();
             showTwoCards();
@@ -189,27 +138,49 @@ public class Blackjack {
         }
     }
 
+    public void ensureDeckSize() {
+        if (cardSet.size() < 15) {
+            cardSet.addAll(usedCards);
+            cardValues.addAll(usedCardValues);
+            usedCards.clear();
+            usedCardValues.clear();
+            shuffleCards();
+            System.out.println("\n*** Deck reshuffled ***");
+        }
+    }
+
     public void askUserHowMuchtoBet() {
         boolean betValid = false;
-        String confirmation;
 
         System.out.println("\nYou have $" + playerMoney);
 
         while (!betValid) {
             System.out.println("Enter the amount of money you want to bet. Minimum bet = $15.");
             System.out.println("Your bet must be in 5s, 10s, 25s, 100s, and 500s.");
+            
+            if (!scan.hasNextDouble()) {
+                System.out.println("Invalid input. Please enter a number.");
+                scan.nextLine();
+                continue;
+            }
+            
             bet = scan.nextDouble();
+            scan.nextLine(); // Consume newline
+            
+            if (bet > playerMoney) {
+                System.out.println("You don't have enough money! You have $" + playerMoney);
+                continue;
+            }
             
             if (bet >= 15 && (bet % 5 == 0)) {
                 System.out.println("Confirm your bet of $" + bet + " (y/n)");
-                scan.nextLine();
-                confirmation = scan.nextLine();
+                String confirmation = scan.nextLine().trim();
                 
-                if (confirmation.toLowerCase().equals("y")) {
+                if (confirmation.equalsIgnoreCase("y")) {
                     System.out.println("Confirmed");
                     betValid = true;
                     playerMoney -= bet;
-                } else if (confirmation.toLowerCase().equals("n")) {
+                } else if (confirmation.equalsIgnoreCase("n")) {
                     System.out.println("Please enter a new bet.");
                 } else {
                     System.out.println("Invalid argument, please enter a new bet.");
@@ -299,17 +270,15 @@ public class Blackjack {
                 playerMoney += bet * 2.5; // 3:2 payout
             } else {
                 System.out.println("Dealer has Blackjack! You lose!");
-                // Bet already taken
             }
             return true;
         }
         
-        int pValue = calculateHandValue(playerDrawnValues);
-        System.out.println("Your hand value: " + pValue);
+        System.out.println("Your hand value: " + playerValue);
         return false;
     }
 
-    public int dealerDrawsUntilSoft17() {
+    public int dealerDrawsUntil17() {
         int sumDealerCards = calculateHandValue(dealerDrawnValues);
 
         System.out.println("\n=== DEALER'S TURN ===");
@@ -318,6 +287,9 @@ public class Blackjack {
 
         while (sumDealerCards < 17) {
             System.out.println("Dealer hits...");
+            
+            ensureDeckSize();
+            
             Card cardRemoved = cardSet.remove(0);
             int cardValueRemoved = cardValues.remove(0);
                     
@@ -355,9 +327,11 @@ public class Blackjack {
                 System.out.println("Do you want to Hit (H) or Stay (ST)?");
             }
             
-            decision = scan.nextLine().toUpperCase();
+            decision = scan.nextLine().trim().toUpperCase();
 
             if (decision.equals("H")) {
+                ensureDeckSize();
+                
                 Card cardRemoved = cardSet.remove(0);
                 int cardValueRemoved = cardValues.remove(0);
                         
@@ -380,26 +354,9 @@ public class Blackjack {
                 playerTurn = false;
                 
                 int playerValue = calculateHandValue(playerDrawnValues);
-                int dealerValue = dealerDrawsUntilSoft17();
+                int dealerValue = dealerDrawsUntil17();
 
-                System.out.println("\n=== FINAL RESULTS ===");
-                System.out.println("Player: " + playerValue);
-                System.out.println("Dealer: " + dealerValue);
-
-                if (playerValue > 21) {
-                    System.out.println("Player Bust! Dealer wins!");
-                } else if (dealerValue > 21) {
-                    System.out.println("Dealer Bust! You win!");
-                    playerMoney += bet * 2;
-                } else if (playerValue > dealerValue) {
-                    System.out.println("You win!");
-                    playerMoney += bet * 2;
-                } else if (playerValue < dealerValue) {
-                    System.out.println("Dealer wins!");
-                } else {
-                    System.out.println("Push! Tie game.");
-                    playerMoney += bet; // Return bet
-                }
+                determineWinner(playerValue, dealerValue);
             } 
             else if (decision.equals("DD") && playerDrawn.size() == 2) {
                 if (playerMoney < bet) {
@@ -410,6 +367,8 @@ public class Blackjack {
                 System.out.println("Double Down! Your bet is now: $" + (bet * 2));
                 playerMoney -= bet;
                 bet *= 2;
+                
+                ensureDeckSize();
                 
                 Card cardRemoved = cardSet.remove(0);
                 int cardValueRemoved = cardValues.remove(0);
@@ -428,42 +387,35 @@ public class Blackjack {
                     System.out.println("\nPlayer Busts! You lose!");
                     playerTurn = false;
                 } else {
-                    // Automatically stay after double down
                     playerTurn = false;
-                    
-                    int dealerValue = dealerDrawsUntilSoft17();
-
-                    System.out.println("\n=== FINAL RESULTS ===");
-                    System.out.println("Player: " + playerValue);
-                    System.out.println("Dealer: " + dealerValue);
-
-                    if (dealerValue > 21) {
-                        System.out.println("Dealer Bust! You win!");
-                        playerMoney += bet * 2;
-                    } else if (playerValue > dealerValue) {
-                        System.out.println("You win!");
-                        playerMoney += bet * 2;
-                    } else if (playerValue < dealerValue) {
-                        System.out.println("Dealer wins!");
-                    } else {
-                        System.out.println("Push! Tie game.");
-                        playerMoney += bet; // Return bet
-                    }
+                    int dealerValue = dealerDrawsUntil17();
+                    determineWinner(playerValue, dealerValue);
                 }
             } 
             else {
                 System.out.println("Invalid option. Try again.");
             }
+        }
+    }
 
-            // Reshuffle if deck is low
-            if (cardSet.size() < 15) {
-                cardSet.addAll(usedCards);
-                cardValues.addAll(usedCardValues);
-                usedCards.clear();
-                usedCardValues.clear();
-                shuffleCards();
-                System.out.println("\n*** Deck reshuffled ***");
-            }
+    public void determineWinner(int playerValue, int dealerValue) {
+        System.out.println("\n=== FINAL RESULTS ===");
+        System.out.println("Player: " + playerValue);
+        System.out.println("Dealer: " + dealerValue);
+
+        if (playerValue > 21) {
+            System.out.println("Player Bust! Dealer wins!");
+        } else if (dealerValue > 21) {
+            System.out.println("Dealer Bust! You win!");
+            playerMoney += bet * 2;
+        } else if (playerValue > dealerValue) {
+            System.out.println("You win!");
+            playerMoney += bet * 2;
+        } else if (playerValue < dealerValue) {
+            System.out.println("Dealer wins!");
+        } else {
+            System.out.println("Push! Tie game.");
+            playerMoney += bet; // Return bet
         }
     }
 
@@ -492,11 +444,11 @@ public class Blackjack {
         boolean invalid = true;
         while (invalid) {
             System.out.println("\nDo you want to play again? (y/n)");
-            String playAgain = scan.nextLine();
+            String playAgain = scan.nextLine().trim();
             
-            if (playAgain.toLowerCase().equals("y")) {
+            if (playAgain.equalsIgnoreCase("y")) {
                 invalid = false;
-            } else if (playAgain.toLowerCase().equals("n")) {
+            } else if (playAgain.equalsIgnoreCase("n")) {
                 invalid = false;
                 keepGoing = false;
                 System.out.println("Thanks for playing! Final amount: $" + playerMoney);
@@ -505,8 +457,4 @@ public class Blackjack {
             }
         }
     }
-
-    
 }
-
-
