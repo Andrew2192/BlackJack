@@ -2,33 +2,30 @@
 
 ## Features
 
-- **Full GUI Interface**: Modern graphical interface with card animations and interactive buttons
-- **Realistic Card Display**: Playing cards with proper suit symbols (♥, ♦, ♣, ♠) and color-coded suits
-- **Casino Rules**: Standard Blackjack rules including:
+- **Full GUI Interface**: Interactive buttons and cards
+- **Realistic Card Display**: Cards with suits and colors
+- **Casino Rules**: 
   - 3:2 payout for Blackjack
-  - Dealer hits until 17
-  - Double Down option on first two cards
-  - Push (tie) returns bet
+  - Dealer hits until soft 17
+  - Double Down option for the first two cards
+  - Push returns bet
 - **Betting System**: 
-  - Starting bankroll of $1,000
+  - Starting balance is $1,000
   - Minimum bet of $15
   - Quick-bet chips: $1, $5, $25, $100
-- **Automatic Deck Management**: Deck automatically reshuffles when running low
-- **Ace Handling**: Aces count as 11 or 1, automatically adjusted to prevent busting
 
 ## Game Rules
 
 1. **Card Values**:
-   - Number cards (2-10): Face value
-   - Face cards (J, Q, K): 10 points
-   - Aces: 11 or 1 (automatically adjusted)
+   - Number cards: Number value
+   - Face cards: 10 points
+   - Aces: 1 or 11
 
 2. **Dealer Rules**:
-   - Dealer must hit on 16 or less
-   - Dealer must stay on 17 or more
+   - Dealer hits on 16 or less
+   - Dealer stays on 17 or more
 
 3. **Betting**:
-   - Bets must be in increments of $5
    - Minimum bet is $15
    - Cannot bet more than your available money
    - Game ends when you have less than $15
